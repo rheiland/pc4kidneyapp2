@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/bin/invoke_app "$@" -C "python @tool/bin/studio.py" -t pc4kidneyapp2 -u anaconda3-5.1
