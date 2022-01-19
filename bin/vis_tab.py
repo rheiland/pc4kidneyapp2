@@ -215,6 +215,10 @@ class Vis(QWidget):
         controls_hbox2.addWidget(self.my_ymax)
         self.my_ymax.setVisible(visible_flag)
 
+        w = QPushButton("Reset")
+        w.clicked.connect(self.reset_plot_range)
+        controls_hbox2.addWidget(w)
+
         self.my_xmin.setText(str(self.xmin))
         self.my_xmax.setText(str(self.xmax))
         self.my_ymin.setText(str(self.ymin))
@@ -249,6 +253,23 @@ class Vis(QWidget):
         self.layout.addWidget(self.myscroll)
 
         # self.create_figure()
+
+
+    def reset_plot_range(self):
+        try:  # due to the initial callback
+            self.my_xmin.setText(str(self.xmin))
+            self.my_xmax.setText(str(self.xmax))
+            self.my_ymin.setText(str(self.ymin))
+            self.my_ymax.setText(str(self.ymax))
+
+            self.plot_xmin = float(self.xmin)
+            self.plot_xmax = float(self.xmax)
+            self.plot_ymin = float(self.ymin)
+            self.plot_ymax = float(self.ymax)
+        except:
+            pass
+
+        self.update_plots()
 
 
     def change_plot_range(self):
