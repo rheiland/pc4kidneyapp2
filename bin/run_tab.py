@@ -63,7 +63,7 @@ class RunModel(QWidget):
 
         hbox.addWidget(QLabel("Exec:"))
         self.exec_name = QLineEdit()
-        self.exec_name.setText('kidney_ftu')
+        self.exec_name.setText('./kidney_ftu')
         # self.exec_name.setText('biorobots')
         hbox.addWidget(self.exec_name)
 
@@ -114,8 +114,8 @@ class RunModel(QWidget):
         #         f.unlink()
         #     except OSError as e:
         #         print("Error: %s : %s" % (f, e.strerror))
-        print("  rm -rf /tmpdir")
-        # os.system('rm -rf tmpdir/*')
+        print("  rm -rf tmpdir/*")
+        os.system('rm -rf tmpdir/*')
 
         # if os.path.isdir('tmpdir'):
         #     # something on NFS causing issues...
