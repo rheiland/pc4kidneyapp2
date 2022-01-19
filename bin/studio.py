@@ -22,14 +22,23 @@ from xml.dom import minidom
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
 
-from bin.config_tab import Config
-from bin.cell_def_tab import CellDef 
+# from bin.config_tab import Config
+# from bin.cell_def_tab import CellDef 
+# # from cell_custom_data_tab import CellCustomData 
+# from bin.microenv_tab import SubstrateDef 
+# from bin.user_params_tab import UserParams 
+# from bin.run_tab import RunModel 
+# # from sbml_tab import SBMLParams 
+# from bin.vis_tab import Vis 
+
+from config_tab import Config
+from cell_def_tab import CellDef 
 # from cell_custom_data_tab import CellCustomData 
-from bin.microenv_tab import SubstrateDef 
-from bin.user_params_tab import UserParams 
-from bin.run_tab import RunModel 
+from microenv_tab import SubstrateDef 
+from user_params_tab import UserParams 
+from run_tab import RunModel 
+from vis_tab import Vis 
 # from sbml_tab import SBMLParams 
-from bin.vis_tab import Vis 
 
 def SingleBrowse(self):
         # if len(self.csv) < 2:
