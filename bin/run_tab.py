@@ -115,7 +115,7 @@ class RunModel(QWidget):
         #     except OSError as e:
         #         print("Error: %s : %s" % (f, e.strerror))
         print("  rm -rf /tmpdir")
-        os.system('rm -rf tmpdir/*')
+        # os.system('rm -rf tmpdir/*')
 
         # if os.path.isdir('tmpdir'):
         #     # something on NFS causing issues...
