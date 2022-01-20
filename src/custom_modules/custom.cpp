@@ -159,8 +159,19 @@ void read_pbm_membrane_gradient_data( void )
 
     // std::string fname1 = "./config/grad_x_pbm_875x750.dat";
     // std::string fname2 = "./config/grad_y_pbm_875x750.dat";
-    std::string fname1 = "../data/grad_x_pbm_875x750.dat";   // on nanoHUB, use ".."
-    std::string fname2 = "../data/grad_y_pbm_875x750.dat";
+
+    // std::string fname1 = "../data/grad_x_pbm_875x750.dat";   // on nanoHUB, use ".."
+    // std::string fname2 = "../data/grad_y_pbm_875x750.dat";
+
+    const char* env_p = std::getenv("KIDNEY_DATA_PATH");
+    std::cout << "       read_pbm_membrane_gradient_data(): KIDNEY_DATA_PATH: " << env_p << std::endl;
+    // std::string full_filename = cwd_string + "/../" + filename;   // bloody nanoHUB
+    // std::string full_filename = env_p + filename;
+    std::string tmpname = "/grad_x_pbm_875x750.dat";   
+    std::string fname1 = env_p + tmpname;
+
+    tmpname = "/grad_y_pbm_875x750.dat";   
+    std::string fname2 = env_p + tmpname;
 
     try {
         std::cout << " ---- Reading " << fname1 << std::endl;
