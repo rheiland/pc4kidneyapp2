@@ -24,7 +24,7 @@
     <omp_num_threads>1</omp_num_threads>
   </parallel>
   <save>
-    <folder>tmpdir</folder>
+    <folder>.</folder>
     <full_data>
       <interval units="min">2</interval>
       <enable>true</enable>
@@ -1205,7 +1205,7 @@
   </cell_definitions>
   <initial_conditions>
     <cell_positions enabled="true" type="csv">
-      <folder>.</folder>
+      <folder>../data</folder>
       <filename>cells.csv</filename>
     </cell_positions>
   </initial_conditions>
