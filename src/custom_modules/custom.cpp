@@ -70,6 +70,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
 
 // double pbm_grad_x[75][88];
 // double pbm_grad_y[75][88];
@@ -562,10 +563,20 @@ bool load_subcells_from_pugixml( pugi::xml_node root )
 
 void load_subcells_csv( std::string filename )
 {
-	std::ifstream file( filename, std::ios::in );
+    char tmp[256];
+    getcwd(tmp, 256);
+    std::cout << "custom.cpp: load_subcells_csv(): Current working directory: " << tmp << std::endl;
+    std::string cwd_string = tmp;   
+    std::string full_filename = cwd_string + "/../" + filename;   // bloody nanoHUB
+    std::cout << "custom.cpp: load_subcells_csv(): full_filename= " << full_filename << std::endl;
+
+
+	// std::ifstream file( filename, std::ios::in );
+	std::ifstream file( full_filename, std::ios::in );
 	if( !file )
 	{ 
-		std::cout << "Error: " << filename << " not found during cell loading. Quitting." << std::endl; 
+		// std::cout << "Error: " << filename << " not found during cell loading. Quitting." << std::endl; 
+		std::cout << "Error: " << full_filename << " not found during cell loading. Quitting." << std::endl; 
 		exit(-1);
 	}
 	
@@ -605,7 +616,8 @@ void load_subcells_csv( std::string filename )
 		else
 		{
 			std::cout << "Warning! No cell definition found for index " << my_type << "!" << std::endl
-			<< "\tIgnoring cell in " << filename << " at position " << position << std::endl; 
+			<< "\tIgnoring cell in " << full_filename << " at position " << position << std::endl; 
+//			<< "\tIgnoring cell in " << filename << " at position " << position << std::endl; 
 		}
 
 	}
