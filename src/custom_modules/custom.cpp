@@ -71,6 +71,7 @@
 #include <sstream>
 #include <string>
 #include <unistd.h>
+#include <cstdlib>
 
 // double pbm_grad_x[75][88];
 // double pbm_grad_y[75][88];
@@ -566,8 +567,15 @@ void load_subcells_csv( std::string filename )
     char tmp[256];
     getcwd(tmp, 256);
     std::cout << "custom.cpp: load_subcells_csv(): Current working directory: " << tmp << std::endl;
+    std::cout << "custom.cpp: load_subcells_csv(): (param) filename= " << filename << std::endl;
     std::string cwd_string = tmp;   
-    std::string full_filename = cwd_string + "/../" + filename;   // bloody nanoHUB
+    // if(const char* env_p = std::getenv("KIDNEY_DATA_PATH"))
+    const char* env_p = std::getenv("KIDNEY_DATA_PATH");
+    std::cout << "        KIDNEY_DATA_PATH: " << env_p << std::endl;
+    // std::string full_filename = cwd_string + "/../" + filename;   // bloody nanoHUB
+    // std::string full_filename = env_p + filename;
+    std::string tmpname = "/cells.csv";   
+    std::string full_filename = env_p + tmpname;
     std::cout << "custom.cpp: load_subcells_csv(): full_filename= " << full_filename << std::endl;
 
 

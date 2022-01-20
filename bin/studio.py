@@ -110,6 +110,10 @@ class PhysiCellXMLCreator(QWidget):
         # binDirectory = os.path.realpath(os.path.abspath(__file__))
         binDirectory = os.path.dirname(os.path.abspath(__file__))
         dataDirectory = os.path.join(binDirectory,'..','data')
+        print("-------- dataDirectory (relative) =",dataDirectory)
+        absolute_data_dir = os.path.abspath(dataDirectory)
+        print("-------- absolute_data_dir =",absolute_data_dir)
+        os.environ['KIDNEY_DATA_PATH'] = absolute_data_dir
         # dataDirectory = os.path.join(binDirectory,'..','config')
         # dataDirectory = os.path.join('.','config')
 
