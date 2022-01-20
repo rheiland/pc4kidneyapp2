@@ -86,7 +86,8 @@ class Vis(QWidget):
         # self.output_dir = "/Users/heiland/dev/PhysiCell_V.1.8.0_release/output"
         # self.output_dir = "output"
         # self.output_dir = "../tmpdir"   # for nanoHUB
-        self.output_dir = "tmpdir"   # for nanoHUB
+        # self.output_dir = "tmpdir"   # for nanoHUB
+        self.output_dir = "."   # for nanoHUB
 
 
         # do in create_figure()?
@@ -130,6 +131,7 @@ class Vis(QWidget):
         self.output_dir_w.setFixedWidth(domain_value_width)
         # w.setText("/Users/heiland/dev/PhysiCell_V.1.8.0_release/output")
         self.output_dir_w.setText(self.output_dir)
+        self.output_dir_w.setEnabled(False)  # for nanoHUB
         # w.textChanged[str].connect(self.output_dir_changed)
         # w.textChanged.connect(self.output_dir_changed)
         controls_hbox.addWidget(self.output_dir_w)

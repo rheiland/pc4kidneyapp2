@@ -54,6 +54,8 @@ class PhysiCellXMLCreator(QWidget):
     def __init__(self, show_vis_flag, parent = None):
         super(PhysiCellXMLCreator, self).__init__(parent)
 
+        self.nanohub = True
+
         self.title_prefix = "PhysiCell Studio: "
         # self.title_prefix = "PhysiCell Studio"
         self.setWindowTitle(self.title_prefix)
@@ -61,8 +63,9 @@ class PhysiCellXMLCreator(QWidget):
         # Menus
         vlayout = QVBoxLayout(self)
         # vlayout.setContentsMargins(5, 35, 5, 5)
-        menuWidget = QWidget(self.menu())
-        vlayout.addWidget(menuWidget)
+        if not self.nanohub:
+            menuWidget = QWidget(self.menu())
+            vlayout.addWidget(menuWidget)
         # self.setWindowIcon(self.style().standardIcon(getattr(QStyle, 'SP_DialogNoButton')))
         # self.setWindowIcon(QtGui.QIcon('physicell_logo_25pct.png'))
         # self.grid = QGridLayout()
@@ -118,7 +121,10 @@ class PhysiCellXMLCreator(QWidget):
         # NOTE! We create a *copy* of the .xml sample model and will save to it.
         copy_file = "copy_" + model_name + ".xml"
         shutil.copy(read_file, copy_file)
-        self.setWindowTitle(self.title_prefix + copy_file)
+        if self.nanohub:
+            self.setWindowTitle(self.title_prefix + "pc4kidneyapp2")
+        else:
+            self.setWindowTitle(self.title_prefix + copy_file)
         # self.add_new_model(copy_file, True)
         # self.config_file = "config_samples/" + name + ".xml"
         self.config_file = copy_file  # to Save
@@ -181,8 +187,20 @@ class PhysiCellXMLCreator(QWidget):
         # self.save_as_cb()
 
         self.run_tab = RunModel()
+        homedir = os.getcwd()
+        print("studio.py: homedir = ",homedir)
+        self.run_tab.homedir = homedir
+
         # self.run_tab.xmin = 
         # self.run_tab.xmax = 
+
+        #------------------
+        if self.nanohub:  # to be able to fill_xml() from Run tab
+            self.run_tab.config_tab = self.config_tab
+            self.run_tab.microenv_tab = self.microenv_tab 
+            self.run_tab.celldef_tab = self.celldef_tab
+            self.run_tab.user_params_tab = self.user_params_tab
+            self.run_tab.tree = self.tree
 
         #------------------
         tabWidget = QTabWidget()

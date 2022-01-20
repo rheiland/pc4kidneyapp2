@@ -26,6 +26,17 @@ class RunModel(QWidget):
         super().__init__()
 
         #-------------------------------------------
+        # used with nanoHUB app
+        self.nanohub = True
+        self.tree = None
+        # following set in studio.py
+        self.homedir = ''   
+        self.config_tab = None
+        self.microenv_tab = None
+        self.celldef_tab = None
+        self.user_params_tab = None
+
+        #-----
         self.vis_tab = None
 
         self.sim_output = QWidget()
@@ -63,15 +74,16 @@ class RunModel(QWidget):
 
         hbox.addWidget(QLabel("Exec:"))
         self.exec_name = QLineEdit()
-        self.exec_name.setText('kidney_ftu')
-        # self.exec_name.setEnabled(False)
+        self.exec_name.setText('../bin/kidney_ftu')
+        self.exec_name.setEnabled(False)
         # self.exec_name.setText('biorobots')
         hbox.addWidget(self.exec_name)
 
         hbox.addWidget(QLabel("Config:"))
         self.config_xml_name = QLineEdit()
         # self.config_xml_name.setText('mymodel.xml')
-        self.config_xml_name.setText('copy_PhysiCell_settings.xml')
+        # self.config_xml_name.setText('copy_PhysiCell_settings.xml')
+        self.config_xml_name.setText('config.xml')
         hbox.addWidget(self.config_xml_name)
 
         # self.vbox.addStretch()
@@ -102,6 +114,37 @@ class RunModel(QWidget):
 
     def run_model_cb(self):
         print("===========  run_model_cb():  ============")
+
+        if self.nanohub: # copy normal workflow of an app, strange as it is
+
+            # make sure we are where we started (app's root dir)
+            os.chdir(self.homedir)
+
+            # remove any previous data
+            # NOTE: this dir name needs to match the <folder>  in /data/<config_file.xml>
+            os.system('rm -rf tmpdir*')
+            if os.path.isdir('tmpdir'):
+                # something on NFS causing issues...
+                tname = tempfile.mkdtemp(suffix='.bak', prefix='tmpdir_', dir='.')
+                shutil.move('tmpdir', tname)
+            os.makedirs('tmpdir')
+
+            # write the default config file to tmpdir
+            new_config_file = "tmpdir/config.xml"  # use Path; work on Windows?
+            # write_config_file(new_config_file)  
+            # update the .xml config file
+            self.config_tab.fill_xml()
+            self.microenv_tab.fill_xml()
+            self.celldef_tab.fill_xml()
+            self.user_params_tab.fill_xml()
+            self.tree.write(new_config_file)
+
+            # Operate from tmpdir. XML: <folder>,</folder>; temporary output goes here.  May be copied to cache later.
+            tdir = os.path.abspath('tmpdir')
+            os.chdir(tdir)   # run exec from here on nanoHUB
+            # sub.update(tdir)
+            # subprocess.Popen(["../bin/myproj", "config.xml"])
+
 
         auto_load_params = True
         # if auto_load_params:

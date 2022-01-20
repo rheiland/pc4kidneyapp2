@@ -157,8 +157,8 @@ void read_pbm_membrane_gradient_data( void )
 
     // std::string fname1 = "./config/grad_x_pbm_875x750.dat";
     // std::string fname2 = "./config/grad_y_pbm_875x750.dat";
-    std::string fname1 = "./data/grad_x_pbm_875x750.dat";
-    std::string fname2 = "./data/grad_y_pbm_875x750.dat";
+    std::string fname1 = "../data/grad_x_pbm_875x750.dat";   // on nanoHUB, use ".."
+    std::string fname2 = "../data/grad_y_pbm_875x750.dat";
 
     try {
         std::cout << " ---- Reading " << fname1 << std::endl;
