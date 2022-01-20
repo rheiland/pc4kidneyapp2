@@ -74,7 +74,8 @@ class RunModel(QWidget):
 
         hbox.addWidget(QLabel("Exec:"))
         self.exec_name = QLineEdit()
-        self.exec_name.setText('../bin/kidney_ftu')
+        # self.exec_name.setText('../bin/kidney_ftu')
+        self.exec_name.setText('kidney_ftu')
         self.exec_name.setEnabled(False)
         # self.exec_name.setText('biorobots')
         hbox.addWidget(self.exec_name)
