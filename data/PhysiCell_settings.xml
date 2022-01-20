@@ -1205,7 +1205,7 @@
   </cell_definitions>
   <initial_conditions>
     <cell_positions enabled="true" type="csv">
-      <folder>../data</folder>
+      <folder>data</folder>
       <filename>cells.csv</filename>
     </cell_positions>
   </initial_conditions>
