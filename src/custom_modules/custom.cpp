@@ -253,11 +253,21 @@ void read_membrane_distance_data( void )
 	int gbm_index = microenvironment.find_density_index( "pbm_gbm_distance" ); 
     std::cout << "\n---------- gbm_index = " << gbm_index << std::endl;
 
+    const char* env_p = std::getenv("KIDNEY_DATA_PATH");
+    std::cout << "       read_membrane_distance_data(): KIDNEY_DATA_PATH: " << env_p << std::endl;
+    std::string tmpname = "/pbm_gbm_dist.dat";   
+    std::string fname1 = env_p + tmpname;
+
+    tmpname = "/vessels4_dist.dat";   
+    std::string fname2 = env_p + tmpname;
+
+
     // for( int n=0; n < microenvironment.number_of_voxels(); n++ )
     std::ifstream gbm_file;
     std::string line;
     try {
-        gbm_file.open("./data/pbm_gbm_dist.dat");
+        // gbm_file.open("./data/pbm_gbm_dist.dat");
+        gbm_file.open(fname1);
 
         double dval;
         int n = 0;
@@ -297,7 +307,8 @@ void read_membrane_distance_data( void )
 
     std::ifstream gcap_file;
     try {
-        gcap_file.open("./data/vessels4_dist.dat");
+        // gcap_file.open("./data/vessels4_dist.dat");
+        gcap_file.open(fname2);
 
         double dval;
         int n = 0;
