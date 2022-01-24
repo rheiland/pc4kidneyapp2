@@ -15,7 +15,8 @@ void heterotypic_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double
 
 
 
-void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt );
+void parietal_epithelial_mechanics( Cell* pCell, Phenotype& phenotype, double dt );
+// void mesangial_matrix_mechanics( Cell* pCell, Phenotype& phenotype, double dt );
 
 void BM_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt );
 

@@ -301,8 +301,22 @@ class Config(QWidget):
 
         self.vbox.addWidget(label)
         # self.cells_csv = QCheckBox("config/cells.csv")
-        self.cells_csv = QCheckBox("cells.csv")
-        self.vbox.addWidget(self.cells_csv)
+        # self.cells_csv = QCheckBox("cells.csv")
+
+        self.cells_csv_hbox = QHBoxLayout()
+        self.csv_rb1 = QRadioButton("all cells")
+        self.csv_rb1.toggled.connect(self.cells_csv_cb)
+        self.cells_csv_hbox.addWidget(self.csv_rb1)
+
+        self.csv_rb2 = QRadioButton("cells y>0")
+        self.csv_rb2.setChecked(True)
+        self.csv_rb2.toggled.connect(self.cells_csv_cb)
+        self.cells_csv_hbox.addWidget(self.csv_rb2)
+
+        self.cells_csv_hbox.addStretch(1)  # not sure about this, but keeps buttons shoved to left
+        self.vbox.addLayout(self.cells_csv_hbox)
+
+        # self.vbox.addWidget(self.cells_csv)
 
         #--------------------------
         # Dummy widget for filler??
@@ -333,6 +347,16 @@ class Config(QWidget):
     # def save_xml(self):
     #     # self.text.setText(random.choice(self.hello))
     #     pass
+
+    def cells_csv_cb(self):
+        radioBtn = self.sender()
+        if radioBtn.isChecked():
+            print("--------- ",radioBtn.text())
+
+        if "all" in radioBtn.text():
+            print(': --> all cells')
+        else:  # transition rates
+            print(': --> cells Y>0')
 
 
     def fill_gui(self):
@@ -368,10 +392,10 @@ class Config(QWidget):
         else:
             self.save_full.setChecked(False)
 
-        if self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'].lower() == 'true':
-            self.cells_csv.setChecked(True)
-        else:
-            self.cells_csv.setChecked(False)
+        # if self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'].lower() == 'true':
+        #     self.cells_csv.setChecked(True)
+        # else:
+        #     self.cells_csv.setChecked(False)
 
 
 
@@ -458,10 +482,19 @@ class Config(QWidget):
             self.xml_root.find(".//full_data//enable").text = 'false'
         self.xml_root.find(".//full_data//interval").text = self.full_interval.text()
 
-        if self.cells_csv.isChecked():
-            self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'] = 'true'
+        # if self.cells_csv.isChecked():
+        #     self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'] = 'true'
+        # else:
+        #     self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'] = 'false'
+
+        self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'] = 'true'
+
+        self.xml_root.find(".//initial_conditions//cell_positions/folder").text = ''
+        if self.csv_rb1.isChecked():
+            self.xml_root.find(".//initial_conditions//cell_positions/filename").text = 'all_cells.csv'
         else:
-            self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'] = 'false'
+            self.xml_root.find(".//initial_conditions//cell_positions/filename").text = 'all_cells_above_y0.csv'
+
 
         # TODO: verify valid type (numeric) and range?
         # xml_root.find(".//x_min").text = str(self.xmin.value)

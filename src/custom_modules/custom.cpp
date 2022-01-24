@@ -106,7 +106,8 @@ void create_cell_types( void )
 	cell_defaults.functions.update_migration_bias = NULL; 
 	cell_defaults.functions.update_phenotype = NULL; // update_cell_and_death_parameters_O2_based; 
 	// cell_defaults.functions.custom_cell_rule = plasto_elastic_mechanics; 
-	cell_defaults.functions.custom_cell_rule = epithelial_special_mechanics; 
+	// cell_defaults.functions.custom_cell_rule = epithelial_special_mechanics; 
+	cell_defaults.functions.custom_cell_rule = NULL; 
 	cell_defaults.functions.contact_function = NULL; 
 	
 	cell_defaults.functions.add_cell_basement_membrane_interactions = NULL; 
@@ -132,6 +133,12 @@ void create_cell_types( void )
 	cell_defaults.functions.update_phenotype = phenotype_function; 
 	cell_defaults.functions.custom_cell_rule = custom_function; 
 	cell_defaults.functions.contact_function = contact_function; 
+
+    Cell_Definition* pCD; 
+    pCD = find_cell_definition("parietal_epithelial"); 
+	pCD->functions.custom_cell_rule = parietal_epithelial_mechanics; 
+    // pCD = find_cell_definition("mesangial_matrix"); 
+	// pCD->functions.custom_cell_rule = mesangial_matrix_mechanics; 
 	
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
@@ -596,8 +603,10 @@ void load_subcells_csv( std::string filename )
     std::cout << "        KIDNEY_DATA_PATH: " << env_p << std::endl;
     // std::string full_filename = cwd_string + "/../" + filename;   // bloody nanoHUB
     // std::string full_filename = env_p + filename;
-    std::string tmpname = "/cells.csv";   
-    std::string full_filename = env_p + tmpname;
+    // std::string tmpname = "/cells.csv";  //rwh: NO! 
+    // std::string full_filename = env_p + tmpname;
+    // std::string sep_str = "/";
+    std::string full_filename = env_p + filename;
     std::cout << "custom.cpp: load_subcells_csv(): full_filename= " << full_filename << std::endl;
 
 

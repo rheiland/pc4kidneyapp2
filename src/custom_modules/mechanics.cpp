@@ -1,7 +1,7 @@
 #include "./mechanics.h"
 
 
-void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
+void parietal_epithelial_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
     static bool first_time = true;
 
