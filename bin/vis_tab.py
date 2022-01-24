@@ -32,9 +32,11 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 
 class Vis(QWidget):
 
-    def __init__(self):
+    def __init__(self, nanohub_flag):
         super().__init__()
         # global self.config_params
+
+        self.nanohub_flag = nanohub_flag
 
         self.xml_root = None
         self.current_svg_frame = 0
@@ -63,9 +65,12 @@ class Vis(QWidget):
         self.xmax = 1000
         self.x_range = self.xmax - self.xmin
 
-        self.ymin = -1000
-        self.ymax = 1000
+        self.ymin = -750
+        self.ymax = 750
         self.y_range = self.ymax - self.ymin
+
+        self.aspect_ratio = 0.7
+
         self.show_nucleus = False
         self.show_edge = False
         self.alpha = 0.7
@@ -124,6 +129,9 @@ class Vis(QWidget):
         controls_hbox = QHBoxLayout()
         w = QPushButton("Directory")
         w.clicked.connect(self.open_directory_cb)
+        # if self.nanohub_flag:
+        if self.nanohub_flag:
+            w.setEnabled(False)  # for nanoHUB
         controls_hbox.addWidget(w)
 
         # self.output_dir = "/Users/heiland/dev/PhysiCell_V.1.8.0_release/output"
@@ -131,7 +139,8 @@ class Vis(QWidget):
         self.output_dir_w.setFixedWidth(domain_value_width)
         # w.setText("/Users/heiland/dev/PhysiCell_V.1.8.0_release/output")
         self.output_dir_w.setText(self.output_dir)
-        self.output_dir_w.setEnabled(False)  # for nanoHUB
+        if self.nanohub_flag:
+            self.output_dir_w.setEnabled(False)  # for nanoHUB
         # w.textChanged[str].connect(self.output_dir_changed)
         # w.textChanged.connect(self.output_dir_changed)
         controls_hbox.addWidget(self.output_dir_w)
@@ -297,8 +306,17 @@ class Vis(QWidget):
         self.canvas.update()
         self.canvas.draw()
 
+    def fill_substrates_combobox(self, substrate_list):
+        print("vis_tab.py: ------- fill_substrates_combobox")
+        print("substrate_list = ",substrate_list )
+        self.substrates_cbox.clear()
+        for s in substrate_list:
+            # print(" --> ",s)
+            self.substrates_cbox.addItem(s)
+        # self.substrates_cbox.setCurrentIndex(2)  # not working; gets reset to oxygen somehow after a Run
+
     def substrates_cbox_changed_cb(self,idx):
-        print("----- substrates_cbox_changed_cb: idx = ",idx)
+        print("----- vis_tab.py: substrates_cbox_changed_cb: idx = ",idx)
         self.field_index = 4 + idx # substrate (0th -> 4 in the .mat)
         self.update_plots()
 
@@ -525,6 +543,7 @@ class Vis(QWidget):
         # Adding one subplot for image
         # self.ax0 = self.figure.add_subplot(111)
         # self.ax0 = self.figure.add_subplot(111, adjustable='box', aspect=1.2)
+        # self.ax0 = self.figure.add_subplot(111, adjustable='box', aspect=self.aspect_ratio)
         self.ax0 = self.figure.add_subplot(111, adjustable='box')
         
         # self.ax0.get_xaxis().set_visible(False)
@@ -1003,3 +1022,10 @@ class Vis(QWidget):
         self.ax0.set_ylim(self.plot_ymin, self.plot_ymax)
         # self.ax0.set_ylim(0.0, self.ymax)
         # self.ax0.clf()
+        # self.aspect_ratio = 1.2
+        # ratio_default=(self.ax0.get_xlim()[1]-self.ax0.get_xlim()[0])/(self.ax0.get_ylim()[1]-self.ax0.get_ylim()[0])
+        # ratio_default = (self.plot_xmax - self.plot_xmin) / (self.plot_ymax - self.plot_ymin)
+        # print("ratio_default = ",ratio_default)
+        # self.ax0.set_aspect(ratio_default * self.aspect_ratio)
+
+        # self.ax0.set_aspect(self.plot_ymin, self.plot_ymax)

@@ -54,7 +54,11 @@ class PhysiCellXMLCreator(QWidget):
     def __init__(self, show_vis_flag, parent = None):
         super(PhysiCellXMLCreator, self).__init__(parent)
 
-        self.nanohub = True
+        # self.nanohub = True
+        self.nanohub_flag = False
+        if( 'HOME' in os.environ.keys() ):
+            self.nanohub_flag = "home/nanohub" in os.environ['HOME']
+
 
         self.title_prefix = "PhysiCell Studio: "
         # self.title_prefix = "PhysiCell Studio"
@@ -63,7 +67,7 @@ class PhysiCellXMLCreator(QWidget):
         # Menus
         vlayout = QVBoxLayout(self)
         # vlayout.setContentsMargins(5, 35, 5, 5)
-        if not self.nanohub:
+        if not self.nanohub_flag:
             menuWidget = QWidget(self.menu())
             vlayout.addWidget(menuWidget)
         # self.setWindowIcon(self.style().standardIcon(getattr(QStyle, 'SP_DialogNoButton')))
@@ -125,7 +129,7 @@ class PhysiCellXMLCreator(QWidget):
         # NOTE! We create a *copy* of the .xml sample model and will save to it.
         copy_file = "copy_" + model_name + ".xml"
         shutil.copy(read_file, copy_file)
-        if self.nanohub:
+        if self.nanohub_flag:
             self.setWindowTitle(self.title_prefix + "pc4kidneyapp2")
         else:
             self.setWindowTitle(self.title_prefix + copy_file)
@@ -153,7 +157,7 @@ class PhysiCellXMLCreator(QWidget):
         self.num_models = 0
         self.model = {}  # key: name, value:[read-only, tree]
 
-        self.config_tab = Config()
+        self.config_tab = Config(self.nanohub_flag)
         self.config_tab.xml_root = self.xml_root
         self.config_tab.fill_gui()
 
@@ -171,6 +175,7 @@ class PhysiCellXMLCreator(QWidget):
         print("studio.py: cd_name=",cd_name)
         self.celldef_tab.populate_tree()
         self.celldef_tab.fill_substrates_comboboxes()
+        # self.vis_tab.substrates_cbox_changed_cb(2)
         self.microenv_tab.celldef_tab = self.celldef_tab
 
         # self.cell_customdata_tab = CellCustomData()
@@ -190,16 +195,18 @@ class PhysiCellXMLCreator(QWidget):
 
         # self.save_as_cb()
 
-        self.run_tab = RunModel()
+        self.run_tab = RunModel(self.nanohub_flag)
         homedir = os.getcwd()
         print("studio.py: homedir = ",homedir)
         self.run_tab.homedir = homedir
+        # self.run_tab.nanohub_flag = self.nanohub_flag
 
         # self.run_tab.xmin = 
         # self.run_tab.xmax = 
 
         #------------------
-        if self.nanohub:  # to be able to fill_xml() from Run tab
+        # if self.nanohub_flag:  # to be able to fill_xml() from Run tab
+        if True:  # to be able to fill_xml() from Run tab
             self.run_tab.config_tab = self.config_tab
             self.run_tab.microenv_tab = self.microenv_tab 
             self.run_tab.celldef_tab = self.celldef_tab
@@ -219,10 +226,15 @@ class PhysiCellXMLCreator(QWidget):
         tabWidget.addTab(self.user_params_tab,"User Params")
         tabWidget.addTab(self.run_tab,"Run")
         if show_vis_flag:
-            self.vis_tab = Vis()
+            print("studio.py: creating vis_tab (Plot tab)")
+            self.vis_tab = Vis(self.nanohub_flag)
+            # self.vis_tab.nanohub_flag = self.nanohub_flag
             # self.vis_tab.xml_root = self.xml_root
             tabWidget.addTab(self.vis_tab,"Plot")
             self.run_tab.vis_tab = self.vis_tab
+            print("studio.py: calling vis_tab.substrates_cbox_changed_cb(2)")
+            self.vis_tab.fill_substrates_combobox(self.celldef_tab.substrate_list)
+            # self.vis_tab.substrates_cbox_changed_cb(2)   # doesn't accomplish it; need to set index, but not sure when
 
         vlayout.addWidget(tabWidget)
         # self.addTab(self.sbml_tab,"SBML")

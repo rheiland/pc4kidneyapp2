@@ -22,12 +22,14 @@ class QHLine(QFrame):
         self.setFrameShadow(QFrame.Sunken)
 
 class RunModel(QWidget):
-    def __init__(self):
+    def __init__(self, nanohub_flag):
         super().__init__()
+
+        self.nanohub_flag = nanohub_flag
 
         #-------------------------------------------
         # used with nanoHUB app
-        self.nanohub = True
+        # self.nanohub = True
         self.tree = None
         # following set in studio.py
         self.homedir = ''   
@@ -75,9 +77,11 @@ class RunModel(QWidget):
         hbox.addWidget(QLabel("Exec:"))
         self.exec_name = QLineEdit()
         # self.exec_name.setText('../bin/kidney_ftu')
-        self.exec_name.setText('kidney_ftu')
-        self.exec_name.setEnabled(False)
-        # self.exec_name.setText('biorobots')
+        if self.nanohub_flag:
+            self.exec_name.setText('kidney_ftu')
+        else:
+            self.exec_name.setText('../kidney_ftu')
+        # self.exec_name.setEnabled(False)
         hbox.addWidget(self.exec_name)
 
         hbox.addWidget(QLabel("Config:"))
@@ -116,7 +120,8 @@ class RunModel(QWidget):
     def run_model_cb(self):
         print("===========  run_model_cb():  ============")
 
-        if self.nanohub: # copy normal workflow of an app, strange as it is
+        # if self.nanohub_flag: # copy normal workflow of an app, strange as it is
+        if True: # copy normal workflow of an app, strange as it is
 
             # make sure we are where we started (app's root dir)
             os.chdir(self.homedir)
@@ -138,7 +143,8 @@ class RunModel(QWidget):
             self.microenv_tab.fill_xml()
             self.celldef_tab.fill_xml()
             self.user_params_tab.fill_xml()
-            self.tree.write(new_config_file)
+            print("run_tab.py: ----> writing modified model to ",new_config_file)
+            self.tree.write(new_config_file)  # saves modified XML to tmpdir/config.xml 
 
             # Operate from tmpdir. XML: <folder>,</folder>; temporary output goes here.  May be copied to cache later.
             tdir = os.path.abspath('tmpdir')
@@ -159,8 +165,8 @@ class RunModel(QWidget):
         #         f.unlink()
         #     except OSError as e:
         #         print("Error: %s : %s" % (f, e.strerror))
-        print("  rm -rf tmpdir/*")
-        os.system('rm -rf tmpdir/*')
+        # print("  rm -rf tmpdir/*")
+        # os.system('rm -rf tmpdir/*')
 
         # if os.path.isdir('tmpdir'):
         #     # something on NFS causing issues...
@@ -181,7 +187,7 @@ class RunModel(QWidget):
             # self.p.start("mymodel", ['biobots.xml'])
             exec_str = self.exec_name.text()
             xml_str = self.config_xml_name.text()
-            print("running: ",exec_str,xml_str)
+            print("run_tab.py: running: ",exec_str,xml_str)
             self.p.start(exec_str, [xml_str])
             # self.p = None  # No, don't do this
         else:

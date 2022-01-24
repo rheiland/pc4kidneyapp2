@@ -21,9 +21,11 @@ class QHLine(QFrame):
 
 
 class Config(QWidget):
-    def __init__(self):
+    def __init__(self, nanohub_flag):
         super().__init__()
         # global self.config_params
+
+        self.nanohub_flag = nanohub_flag
 
         self.xml_root = None
 
@@ -229,6 +231,8 @@ class Config(QWidget):
         # self.num_threads.setFixedWidth(value_width)
         self.folder.setFixedWidth(domain_value_width)
         # self.folder.setValidator(QtGui.QTex())
+        if self.nanohub_flag:
+            self.folder.setEnabled(False)
         hbox.addWidget(self.folder)
 
         label = QLabel("   ")  # weird, but nicer layout
@@ -263,6 +267,8 @@ class Config(QWidget):
         self.svg_interval = QLineEdit()
         self.svg_interval.setFixedWidth(value_width)
         self.svg_interval.setValidator(QtGui.QDoubleValidator())
+        self.svg_interval.textChanged.connect(self.svg_interval_cb)
+
         hbox.addWidget(self.svg_interval)
 
         label = QLabel("min")
@@ -284,6 +290,7 @@ class Config(QWidget):
         self.full_interval = QLineEdit()
         self.full_interval.setFixedWidth(value_width)
         self.full_interval.setValidator(QtGui.QDoubleValidator())
+        self.full_interval.setEnabled(False)
         hbox.addWidget(self.full_interval)
 
         label = QLabel("min")
@@ -305,11 +312,12 @@ class Config(QWidget):
 
         self.cells_csv_hbox = QHBoxLayout()
         self.csv_rb1 = QRadioButton("all cells")
+        self.csv_rb1.setChecked(True)
         self.csv_rb1.toggled.connect(self.cells_csv_cb)
         self.cells_csv_hbox.addWidget(self.csv_rb1)
 
         self.csv_rb2 = QRadioButton("cells y>0")
-        self.csv_rb2.setChecked(True)
+        # self.csv_rb2.setChecked(True)
         self.csv_rb2.toggled.connect(self.cells_csv_cb)
         self.cells_csv_hbox.addWidget(self.csv_rb2)
 
@@ -347,6 +355,10 @@ class Config(QWidget):
     # def save_xml(self):
     #     # self.text.setText(random.choice(self.hello))
     #     pass
+
+    def svg_interval_cb(self, text):
+        print("svg_interval_cb: text=",text)
+        self.full_interval.setText(text)
 
     def cells_csv_cb(self):
         radioBtn = self.sender()
@@ -480,7 +492,8 @@ class Config(QWidget):
             self.xml_root.find(".//full_data//enable").text = 'true'
         else:
             self.xml_root.find(".//full_data//enable").text = 'false'
-        self.xml_root.find(".//full_data//interval").text = self.full_interval.text()
+        # self.xml_root.find(".//full_data//interval").text = self.full_interval.text()
+        self.xml_root.find(".//full_data//interval").text = self.svg_interval.text()
 
         # if self.cells_csv.isChecked():
         #     self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'] = 'true'
