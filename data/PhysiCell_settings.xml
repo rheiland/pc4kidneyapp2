@@ -1212,7 +1212,9 @@
   <user_parameters>
     <random_seed description="" type="int" units="dimensionless">0</random_seed>
     <mechanics_voxel_size description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)" type="double" units="micron">15</mechanics_voxel_size>
+    <!--
     <pbm_gbm_distance_file  type="string">./config/pbm_gbm_dist.dat</pbm_gbm_distance_file>
     <vessels_distance_file  type="string">./config/vessels4_dist.dat</vessels_distance_file>
+    -->
   </user_parameters>
 </PhysiCell_settings>
