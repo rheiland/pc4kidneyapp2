@@ -2953,12 +2953,13 @@ class CellDef(QWidget):
         # prev_vname = self.celldef_tab.custom_data_name[idx].text()
         # print("custom_data_name_changed(): prev_vname = ",prev_vname)
         # # print("(master) prev_vname = ", self.sender().prev_vname)
-        print("(master) vname = ", vname)
-        print("(master) idx = ", idx)
-        print("(master) custom_data_name_changed(): text = ", text)
+        print("custom_data_name_changed(): vname = ", vname)
+        print("custom_data_name_changed(): idx = ", idx)
+        print("custom_data_name_changed(): custom_data_name_changed(): text = ", text)
         # print()
 
         if old_varname != vname:
+            print("custom_data_name_changed(): self.param_d.keys() = ",self.param_d.keys())
             for cdname in self.param_d.keys():
                 print("----- cdname = ",cdname)
                 self.param_d[cdname]['custom_data'][vname] = self.param_d[cdname]['custom_data'].pop(old_varname)
@@ -2992,13 +2993,16 @@ class CellDef(QWidget):
 
     # --- custom data (rwh: OMG, this took a lot of time to solve!)
     def custom_data_value_changed(self, text):
-        print("--------- (master) custom_data tab: custom_data_value_changed() --------")
+        print("--------- custom_data_tab(): custom_data_value_changed() --------")
         # print("self.sender() = ", self.sender())
         vname = self.sender().vname.text()
         idx = self.sender().idx
-        print("(master) vname = ", vname)
-        print("(master) idx = ", idx)
-        print("(master) custom_data_value_changed(): text = ", text)
+        print(" vname = ", vname)
+        print(" idx = ", idx)
+        if idx == None:
+            print("None --> return")
+            return
+        print(" custom_data_value_changed(): text = ", text)
 
         self.param_d[self.current_cell_def]['custom_data'][vname] = text
         # self.param_d[self.current_cell_def]['cycle_choice_idx'] = idx
@@ -3029,14 +3033,15 @@ class CellDef(QWidget):
             print("self.custom_data_count = ",self.custom_data_count)
 
     #--------------------------------------------------------
+    # called from studio.py for a new model
     def clear_custom_data_tab(self):
         print("\n\n------- cell_def_tab.py: clear_custom_data_tab(self):  self.custom_data_count = ",self.custom_data_count)
         for idx in range(self.custom_data_count):
             self.custom_data_name[idx].setReadOnly(False)  # turn off read-only so we can change it. ugh.
-            self.custom_data_name[idx].setText("")  # beware this triggering a callback
+            self.custom_data_name[idx].setText("")  # BEWARE! triggers a callback
             # self.custom_data_name[idx].setReadOnly(True)
 
-            self.custom_data_value[idx].setText("") # triggering a callback)  # beware thiis 
+            self.custom_data_value[idx].setText("") # BEWARE! triggers a callback
 
             # self.custom_data_units[idx].setReadOnly(False)
             # self.custom_data_units[idx].setText("")
@@ -3118,7 +3123,7 @@ class CellDef(QWidget):
 
     # @QtCore.Slot()
     def secretion_substrate_changed_cb(self, idx):
-        # print('------ secretion_substrate_changed_cb(): idx = ',idx)
+        print('------ secretion_substrate_changed_cb(): idx = ',idx)
         self.current_secretion_substrate = self.secretion_substrate_dropdown.currentText()
         # print("    self.current_secretion_substrate = ",self.current_secretion_substrate)
         if idx == -1:
@@ -3807,10 +3812,18 @@ class CellDef(QWidget):
     #-----------------------------------------------------------------------------------------
     def update_secretion_params(self):
         cdname = self.current_cell_def
+
+        print("update_secretion_params(): cdname = ",cdname)
+        print("update_secretion_params(): self.current_secretion_substrate = ",self.current_secretion_substrate)
+        print(self.param_d[cdname]["secretion"])
+
         self.secretion_rate.setText(self.param_d[cdname]["secretion"][self.current_secretion_substrate]["secretion_rate"])
         self.secretion_target.setText(self.param_d[cdname]["secretion"][self.current_secretion_substrate]["secretion_target"])
         self.uptake_rate.setText(self.param_d[cdname]["secretion"][self.current_secretion_substrate]["uptake_rate"])
         self.secretion_net_export_rate.setText(self.param_d[cdname]["secretion"][self.current_secretion_substrate]["net_export_rate"])
+
+        # rwh: also update the combobox to select the substrate
+
 
     #-----------------------------------------------------------------------------------------
     def clear_custom_data_params(self):
@@ -3879,7 +3892,8 @@ class CellDef(QWidget):
     #-------------------------------------------------------------------
     # Parse the .xml, populate the dict of params (self.param_d) and self.tree
     def populate_tree(self):
-        print("=======================  cell_def populate_tree  ======================= ")
+        print("=======================  cell_def_tab(): populate_tree  ======================= ")
+        print("    self.param_d = ",self.param_d)
         self.master_custom_varname.clear()
 
         uep = self.xml_root.find(".//cell_definitions")
@@ -5247,7 +5261,7 @@ class CellDef(QWidget):
             if self.param_d[cdname]["necrosis_phase1_fixed"]:
                 bval = "true"
             subelm2 = ET.SubElement(subelm, "duration",{"index":"1", "fixed_duration":bval})
-            subelm2.text = self.param_d[cdname]["necrosis_phase0_duration"]
+            subelm2.text = self.param_d[cdname]["necrosis_phase1_duration"]
             subelm2.tail = self.indent14
         else:   # transition rate
             # 	<phase_transition_rates units="1/min">

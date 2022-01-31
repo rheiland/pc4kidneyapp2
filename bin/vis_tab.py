@@ -14,6 +14,7 @@ from matplotlib.collections import PatchCollection
 import matplotlib.colors as mplc
 from matplotlib import gridspec
 from collections import deque
+import glob
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QFrame,QApplication,QWidget,QTabWidget,QFormLayout,QLineEdit, QHBoxLayout,QVBoxLayout,QRadioButton,QLabel,QCheckBox,QComboBox,QScrollArea,  QMainWindow,QGridLayout, QPushButton, QFileDialog, QMessageBox
@@ -37,6 +38,8 @@ class Vis(QWidget):
         # global self.config_params
 
         self.nanohub_flag = nanohub_flag
+
+        self.animating_flag = False
 
         self.xml_root = None
         self.current_svg_frame = 0
@@ -145,6 +148,10 @@ class Vis(QWidget):
         # w.textChanged.connect(self.output_dir_changed)
         controls_hbox.addWidget(self.output_dir_w)
 
+        self.first_button = QPushButton("<<")
+        self.first_button.clicked.connect(self.first_plot_cb)
+        controls_hbox.addWidget(self.first_button)
+
         self.back_button = QPushButton("<")
         self.back_button.clicked.connect(self.back_plot_cb)
         controls_hbox.addWidget(self.back_button)
@@ -153,7 +160,12 @@ class Vis(QWidget):
         self.forward_button.clicked.connect(self.forward_plot_cb)
         controls_hbox.addWidget(self.forward_button)
 
+        self.last_button = QPushButton(">>")
+        self.last_button.clicked.connect(self.last_plot_cb)
+        controls_hbox.addWidget(self.last_button)
+
         self.play_button = QPushButton("Play")
+        self.play_button.setStyleSheet("background-color : lightgreen")
         # self.play_button.clicked.connect(self.play_plot_cb)
         self.play_button.clicked.connect(self.animate)
         controls_hbox.addWidget(self.play_button)
@@ -168,9 +180,9 @@ class Vis(QWidget):
         self.cells_checked_flag = True
 
         self.substrates_checkbox = QCheckBox('Substrates')
-        self.substrates_checkbox.setChecked(True)
+        self.substrates_checkbox.setChecked(False)
         self.substrates_checkbox.clicked.connect(self.substrates_toggle_cb)
-        self.substrates_checked_flag = True
+        self.substrates_checked_flag = False
         
 
         hbox = QHBoxLayout()
@@ -283,9 +295,21 @@ class Vis(QWidget):
         self.update_plots()
 
 
+    def init_plot_range(self, config_tab):
+        print("----- init_plot_range:")
+        try:
+            # beware of widget callback 
+            self.my_xmin.setText(config_tab.xmin.text())
+            self.my_xmax.setText(config_tab.xmax.text())
+            self.my_ymin.setText(config_tab.ymin.text())
+            self.my_ymax.setText(config_tab.ymax.text())
+        except:
+            pass
+
     def change_plot_range(self):
         print("----- change_plot_range:")
-        print("----- my_xmin= ",self.my_xmin.text())
+        # print("----- my_xmin= ",self.my_xmin.text())
+        # print("----- my_xmax= ",self.my_xmax.text())
         try:  # due to the initial callback
             self.plot_xmin = float(self.my_xmin.text())
             self.plot_xmax = float(self.my_xmax.text())
@@ -380,6 +404,7 @@ class Vis(QWidget):
         print('reset_model(): len(xcoords)=',len(xcoords))
         self.numx =  len(xcoords)
         self.numy =  len(xcoords)
+        print("reset_model(): self.numx, numy = ",self.numx,self.numy)
 
         #-------------------
         vars_uep = xml_root.find(".//microenvironment//domain//variables")
@@ -444,6 +469,42 @@ class Vis(QWidget):
     #     self.output_dir = text
     #     print(self.output_dir)
 
+    def first_plot_cb(self, text):
+        if self.reset_model_flag:
+            self.reset_model()
+            self.reset_model_flag = False
+
+        self.current_svg_frame = 0
+        self.update_plots()
+
+    def last_plot_cb(self, text):
+        if self.reset_model_flag:
+            self.reset_model()
+            self.reset_model_flag = False
+
+        print('cwd = ',os.getcwd())
+        print('self.output_dir = ',self.output_dir)
+        # xml_file = Path(self.output_dir, "initial.xml")
+        # xml_files = glob.glob('tmpdir/output*.xml')
+        xml_files = glob.glob('output*.xml')
+        if len(xml_files) == 0:
+            return
+        xml_files.sort()
+        svg_files = glob.glob('snapshot*.svg')
+        svg_files.sort()
+        print('xml_files = ',xml_files)
+        num_xml = len(xml_files)
+        print('svg_files = ',svg_files)
+        num_svg = len(svg_files)
+        print('num_xml, num_svg = ',num_xml, num_svg)
+        last_xml = int(xml_files[-1][-12:-4])
+        last_svg = int(svg_files[-1][-12:-4])
+        print('last_xml, _svg = ',last_xml,last_svg)
+        self.current_svg_frame = last_xml
+        if last_svg < last_xml:
+            self.current_svg_frame = last_svg
+        self.update_plots()
+
     def back_plot_cb(self, text):
         if self.reset_model_flag:
             self.reset_model()
@@ -471,6 +532,7 @@ class Vis(QWidget):
     # def task(self):
             # self.dc.update_figure()
 
+    # used by animate
     def play_plot_cb(self):
         for idx in range(1):
             self.current_svg_frame += 1
@@ -478,15 +540,18 @@ class Vis(QWidget):
 
             fname = "snapshot%08d.svg" % self.current_svg_frame
             full_fname = os.path.join(self.output_dir, fname)
-            print("full_fname = ",full_fname)
+            # print("full_fname = ",full_fname)
             # with debug_view:
                 # print("plot_svg:", full_fname) 
             # print("-- plot_svg:", full_fname) 
             if not os.path.isfile(full_fname):
                 # print("Once output files are generated, click the slider.")   
-                print("ERROR:  filename not found.")
-                self.timer.stop()
-                self.current_svg_frame -= 1
+                print("play_plot_cb():  Reached the end (or no output files found).")
+                # self.timer.stop()
+                # self.current_svg_frame -= 1
+                self.animating_flag = True
+                self.current_svg_frame = 0
+                self.animate()
                 return
 
             self.update_plots()
@@ -504,17 +569,25 @@ class Vis(QWidget):
         self.update_plots()
 
 
-    def animate(self, text):
-        if self.reset_model_flag:
-            self.reset_model()
-            self.reset_model_flag = False
+    def animate(self):
+        if not self.animating_flag:
+            self.animating_flag = True
+            self.play_button.setText("Halt")
+            self.play_button.setStyleSheet("background-color : red")
 
-        self.current_svg_frame = 0
-        # self.timer = QtCore.QTimer()
-        # self.timer.timeout.connect(self.play_plot_cb)
-        # self.timer.start(2000)  # every 2 sec
-        # self.timer.start(100)
-        self.timer.start(1)
+            if self.reset_model_flag:
+                self.reset_model()
+                self.reset_model_flag = False
+
+            # self.current_svg_frame = 0
+            self.timer.start(1)
+
+        else:
+            self.animating_flag = False
+            self.play_button.setText("Play")
+            self.play_button.setStyleSheet("background-color : lightgreen")
+            self.timer.stop()
+
 
     # def play_plot_cb0(self, text):
     #     for idx in range(10):
@@ -690,7 +763,7 @@ class Vis(QWidget):
         current_frame = frame
         fname = "snapshot%08d.svg" % frame
         full_fname = os.path.join(self.output_dir, fname)
-        print("\n    ==>>>>> plot_svg(): full_fname=",full_fname)
+        # print("   ==>>>>> plot_svg(): full_fname=",full_fname)
         # with debug_view:
             # print("plot_svg:", full_fname) 
         # print("-- plot_svg:", full_fname) 
