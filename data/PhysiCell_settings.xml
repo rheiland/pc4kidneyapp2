@@ -171,6 +171,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -264,6 +266,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -357,6 +361,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -450,6 +456,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -543,6 +551,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -636,6 +646,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -729,6 +741,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -822,6 +836,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -915,6 +931,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -1008,6 +1026,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>1</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -1101,6 +1121,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.0001</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -1194,6 +1216,8 @@
         </secretion>
       </phenotype>
       <custom_data>
+        <attached>0</attached>
+        <attach_time>0</attach_time>
         <renin>0</renin>
         <cell_elasticity>0.5</cell_elasticity>
         <cell_plasticity>0.00001</cell_plasticity>
@@ -1212,6 +1236,8 @@
   <user_parameters>
     <random_seed description="" type="int" units="dimensionless">0</random_seed>
     <mechanics_voxel_size description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)" type="double" units="micron">15</mechanics_voxel_size>
+    <R_a description="adhesion radius (to membrane)" type="double" units="micron">1.0</R_a>
+    <max_attach_time description="attachment time to membrane" type="double" units="min">10.0</max_attach_time>
     <!--
     <pbm_gbm_distance_file  type="string">./config/pbm_gbm_dist.dat</pbm_gbm_distance_file>
     <vessels_distance_file  type="string">./config/vessels4_dist.dat</vessels_distance_file>
